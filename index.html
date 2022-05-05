@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>qinghua</title>
+	<style>
+		* {
+			margin: 0px;
+			padding: 0px;
+		}
+		#warp {
+			background: #000;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+		#box {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			color: #fff;
+			font-size: 24px;
+		}
+	</style>
+</head>
+<body>
+	<div id="warp">
+		<div id="box">张</div>
+	</div>
+</body>
+<script>
+	window.onload=function()
+{
+	var warp = document.getElementById("warp")
+	var box = document.getElementById('box')
+	console.log(box)
+	this.warp.onclick = function () {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET',"https://api.uomg.com/api/rand.qinghua?format=text",true)
+		xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
+		xhr.onreadystatechange = function(e){
+			if(xhr.readyState == 4) {
+			if(xhr.status == 200){
+			console.log(box)
+			box.innerText = xhr.responseText
+			}
+		}
+		}
+		xhr.send(null)
+	}
+}
+</script>
+</html>
