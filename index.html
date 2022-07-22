@@ -1,57 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>qinghua</title>
-	<style>
-		* {
-			margin: 0px;
-			padding: 0px;
-		}
-		#warp {
-			background: #000;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-		}
-		#box {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			color: #fff;
-			font-size: 24px;
-		}
-	</style>
-</head>
-<body>
-	<div id="warp">
-		<div id="box">张</div>
-	</div>
-</body>
-<script>
-	window.onload=function()
-{
-	var warp = document.getElementById("warp")
-	var box = document.getElementById('box')
-	console.log(box)
-	this.warp.onclick = function () {
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET',"https://api.uomg.com/api/rand.qinghua?format=text",true)
-		xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-		xhr.onreadystatechange = function(e){
-			if(xhr.readyState == 4) {
-			if(xhr.status == 200){
-			console.log(box)
-			box.innerText = xhr.responseText
-			}
-		}
-		}
-		xhr.send(null)
-	}
-}
-</script>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+		<title></title>
+	</head>
+	<link rel="stylesheet" href="../css/index.css">
+	<link rel="stylesheet" href="../font/iconfont.css">
+	<link href="//unpkg.com/layui@2.7.5/dist/css/layui.css" rel="stylesheet">
+	<body>
+		<div id="warp">
+			<div class="backimg">
+				<div class="contbox" ref="backimg"></div>
+			</div>
+			<div class="cotent">
+				<div class="contbox">
+					<span class="title">{{title}}</span>
+					<div class="title_box">
+						<p class="titl_text">
+							{{new Date().getFullYear()}}年{{new Date().getMonth()+1}}月{{new Date().getDate()}}日
+						</p>
+						<p class="titl_text">
+							地址：{{address}}
+						</p>
+						<p class="titl_text">
+							现在温度：{{nowTemper}}
+						</p>
+					</div>
+					
+					<button @click="tap" class="layui-btn layui-btn-radius layui-btn-normal">点击发送</button>
+					<ul class="weathBox">
+						<template v-for="(item, index) in List" :key="index">
+							<li ref="list">
+								<div class="liCont">
+									<div class="liDiv daydate"><span class="iconfont icon-rili"></span>：{{item.date}}</div>
+									<div class="liDiv highest"><span class="iconfont icon-gaowenzhuanhuan"></span>：{{item.high}}</div>
+									<div class="liDiv minimun"><span class="iconfont icon-diwen"></span>：{{item.low}}</div>
+									<div class="liDiv minimun"><span class="iconfont icon-fengli"></span>：{{item.fengli}}</div>
+									<div class="liDiv minimun"><span class="iconfont icon-fengxiang"></span>：{{item.fengxiang}}</div>
+									<div class="liDiv minimun"><span class="iconfont icon-tianqi"></span>：{{item.type}}</div>
+								</div>
+							</li>
+						</template>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" color="54,54,54" opacity='0.7' zIndex="-2" count="99" src="//cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.min.js"></script><!--背景-->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.7.7"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="//unpkg.com/layui@2.7.5/dist/layui.js"></script>
+	<script type="text/javascript">
+		layui.use(['layer', 'form'], function(){
+		  var layer = layui.layer;
+		  var form = layui.form;
+		  
+		  layer.msg('Hello World');
+		});
+		var vm = new Vue ({
+			el:'#warp',
+			data () {
+				return {
+					msg: '你好',
+					address: '',
+					imgLink: '',
+					screenWidth: '',
+					screenHeight: '',
+					title: '',
+					List: [],
+					nowTemper: '',
+					yesterday: '',
+					liwidth: '',
+					liheight: '',
+				}
+			},
+			mounted () {
+				this.getWeather()
+				this.screenWidth = window.outerWidth;
+				this.screenHeight = window.outerHeight;
+				this.imgLink = `https://picsum.photos/${this.screenWidth}/${this.screenHeight}`
+			},
+			methods: {
+				tap () {
+					axios.get('https://sctapi.ftqq.com/SCT161722TFuaneOxoXmd8KudxNfOokYe3.send', {
+						params: {
+							title: 'msgtitle'
+						}
+					}).then((res) => {
+						console.log(res)
+					}).catch((error)=> {
+						console.log(error)
+					})
+				},
+				getWeather () {
+					axios.get('http://wthrcdn.etouch.cn/weather_mini', {
+						params: {
+							city: '临汾'
+						}
+					}).then((res) => {
+						console.log(res)
+						let {ganmao, forecast, city, wendu, yesterday} = res.data.data
+						this.title = ganmao
+						this.address = city
+						this.List = forecast
+						this.nowTemper = wendu
+						this.yesterday = yesterday
+						this.$nextTick(() => {
+							this.$refs.backimg.style.background = `url(${this.imgLink})`
+						})
+					}).catch((error)=> {
+						console.log(error)
+					})
+				}
+			},
+		})
+	</script>
 </html>
